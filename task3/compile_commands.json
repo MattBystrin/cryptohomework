@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "g++",
+      "-MMD",
+      "-MP",
+      "-I../lib",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "obj/debug/main.o",
+      "../main.cpp"
+    ],
+    "directory": "/home/ronin/Study/Cryptography/task3/build"
+    "file": "/home/ronin/Study/Cryptography/task3/main.cpp"
+    "output": "/home/ronin/Study/Cryptography/task3/build/obj/debug/main.o"
+  },
+]

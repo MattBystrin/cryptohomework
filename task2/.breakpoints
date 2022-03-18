@@ -1,0 +1,2 @@
+break /home/ronin/Study/Cryptography/task_2/main.cpp:38
+disable $bpnum
