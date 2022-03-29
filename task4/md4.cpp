@@ -74,44 +74,43 @@ void md4::transform()
 	FF(c, d, a, b, x[14], 11);	
 	FF(b, c, d, a, x[15], 19);	
 	/* Second round */
-	if (rounds < 2)
-		return;
-	GG(a, b, c, d, x[0], 3);	
-	GG(d, a, b, c, x[4], 5);	
-	GG(c, d, a, b, x[8], 9);	
-	GG(b, c, d, a, x[12], 13);	
-	GG(a, b, c, d, x[1], 3);	
-	GG(d, a, b, c, x[5], 5);	
-	GG(c, d, a, b, x[9], 9);	
-	GG(b, c, d, a, x[13], 13);	
-	GG(a, b, c, d, x[2], 3);	
-	GG(d, a, b, c, x[6], 5);	
-	GG(c, d, a, b, x[10], 9);	
-	GG(b, c, d, a, x[14], 13);	
-	GG(a, b, c, d, x[3], 3);	
-	GG(d, a, b, c, x[7], 5);	
-	GG(c, d, a, b, x[11], 9);	
-	GG(b, c, d, a, x[15], 13);	
-	/* Third round */	
-	if (rounds < 3)
-		return;
-	HH(a, b, c, d, x[0], 3);	
-	HH(d, a, b, c, x[8], 9);	
-	HH(c, d, a, b, x[4], 11);	
-	HH(b, c, d, a, x[12], 15);	
-	HH(a, b, c, d, x[2], 3);	
-	HH(d, a, b, c, x[10], 9);	
-	HH(c, d, a, b, x[6], 11);	
-	HH(b, c, d, a, x[14], 15);	
-	HH(a, b, c, d, x[1], 3);	
-	HH(d, a, b, c, x[9], 9);	
-	HH(c, d, a, b, x[5], 11);	
-	HH(b, c, d, a, x[13], 15);	
-	HH(a, b, c, d, x[3], 3);	
-	HH(d, a, b, c, x[11], 9);	
-	HH(c, d, a, b, x[7], 11);	
-	HH(b, c, d, a, x[15], 15);	
-
+	if (rounds > 1) {
+		GG(a, b, c, d, x[0], 3);	
+		GG(d, a, b, c, x[4], 5);	
+		GG(c, d, a, b, x[8], 9);	
+		GG(b, c, d, a, x[12], 13);	
+		GG(a, b, c, d, x[1], 3);	
+		GG(d, a, b, c, x[5], 5);	
+		GG(c, d, a, b, x[9], 9);	
+		GG(b, c, d, a, x[13], 13);	
+		GG(a, b, c, d, x[2], 3);	
+		GG(d, a, b, c, x[6], 5);	
+		GG(c, d, a, b, x[10], 9);	
+		GG(b, c, d, a, x[14], 13);	
+		GG(a, b, c, d, x[3], 3);	
+		GG(d, a, b, c, x[7], 5);	
+		GG(c, d, a, b, x[11], 9);	
+		GG(b, c, d, a, x[15], 13);	
+		/* Third round */	
+		if (rounds > 2) {
+			HH(a, b, c, d, x[0], 3);	
+			HH(d, a, b, c, x[8], 9);	
+			HH(c, d, a, b, x[4], 11);	
+			HH(b, c, d, a, x[12], 15);	
+			HH(a, b, c, d, x[2], 3);	
+			HH(d, a, b, c, x[10], 9);	
+			HH(c, d, a, b, x[6], 11);	
+			HH(b, c, d, a, x[14], 15);	
+			HH(a, b, c, d, x[1], 3);	
+			HH(d, a, b, c, x[9], 9);	
+			HH(c, d, a, b, x[5], 11);	
+			HH(b, c, d, a, x[13], 15);	
+			HH(a, b, c, d, x[3], 3);	
+			HH(d, a, b, c, x[11], 9);	
+			HH(c, d, a, b, x[7], 11);	
+			HH(b, c, d, a, x[15], 15);	
+		}
+	}
 	output[0] += a;
 	output[1] += b;
 	output[2] += c;

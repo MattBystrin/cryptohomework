@@ -6,7 +6,7 @@
 #include <string.h>
 #include "generator.hpp"
 
-std::vector<int> polynom = {1, 4};
+std::vector<int> polynom = {84, 71};
 
 std::vector<uint8_t> load_key(std::string keypath);
 
@@ -116,7 +116,7 @@ float poker_test(const std::vector<uint32_t> &seq)
 
 float correlation_test(std::vector<uint8_t> &seq, int k)
 {
-	std::cout << "k = " << k << std::endl;
+	std::cout << "k = " << k ;
 	bit_adapter<uint8_t> bitseq(seq);
 	const double N = bitseq.size();
 	double m1 = 0; // i
@@ -153,6 +153,8 @@ std::vector<uint8_t> read_file(std::string path)
 {
 	std::vector<uint8_t> seq;
 	std::ifstream f(path, std::ios::in | std::ios::binary);
+	if (!f)
+		throw std::runtime_error("Error opening file");
 	while(true) {
 		uint8_t byte;
 		f.read((char *)&byte, sizeof(byte));
@@ -280,15 +282,17 @@ int main(int argc, char *argv[])
 	argparse::ArgumentParser parser("task2");
 	parser.add_argument("action")
 		.required()
-		.help("action to perform: encrypt, decrypt, test, make-key");
+		.help("action to perform: encrypt, decrypt, test, make-key, periodic");
 	parser.add_argument("-f", "--filepath")
 		.help("input file");
 	parser.add_argument("-o", "--output");
 	parser.add_argument("-k", "--key")
 		.help("key for encryption/decryption");
-	parser.add_argument("-p");
-	parser.add_argument("-q");
-
+	parser.add_argument("-t", "--type")
+		.help("test type");
+	parser.add_argument("-n")
+		.scan<'i', int>()
+		.help("num for test");
 	std::string action;
 	std::string type;
 	try {
@@ -299,6 +303,7 @@ int main(int argc, char *argv[])
 		std::exit(1);
 	}
 	try {
+		// Output of sequence
 		action = parser.get("action");
 		if (action == "decrypt" || action == "encrypt") {
 			auto k = parser.present<std::string>("-k");

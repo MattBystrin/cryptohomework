@@ -1,0 +1,16 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "build/main.o",
+      "main.cpp"
+    ],
+    "directory": "/home/ronin/Study/Cryptography/task_2",
+    "file": "/home/ronin/Study/Cryptography/task_2/main.cpp",
+    "output": "/home/ronin/Study/Cryptography/task_2/build/main.o"
+  }
+]

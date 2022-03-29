@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 #include <map>
+#include <chrono>
 
 #include "md4.hpp"
 #include "bit_adapter.hpp"
@@ -32,7 +33,7 @@ void bitdiff(std::vector<uint8_t> input,
 	ihash.update(input);
 	auto ih = ihash.finish();
 	bit_adapter<uint8_t> bit_cpy(copy);
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < input.size() * 8; ++i) {
 		bit_cpy.set_at(i, !bit_cpy[i]);
 		md4 chash(start, rounds);
 		chash.update(copy);
@@ -95,7 +96,7 @@ void pre_image(int k, std::array<uint8_t, 16> hash)
 	int i = 0;
 	while(true) {
 		std::vector<uint8_t> in;
-		in.resize(rand() % 20);
+		in.resize(rand() % 100);
 		std::generate(in.begin(), in.end(), [](){ return rand();});
 		md4 md;
 		md.update(in);
@@ -107,6 +108,7 @@ void pre_image(int k, std::array<uint8_t, 16> hash)
 				return false;
 			return true;
 		}(k)) {
+			std::cout << "Scanned " << i << std::endl;
 			print_array("Pre-image", in);
 			break;
 		}
@@ -148,7 +150,8 @@ int main(int argc, char *argv[])
 		.help("action to perform: hash,"
 		      "bitdiff,"
 		      "collision,"
-		      "pre-img"
+		      "pre-img,"
+		      "time"
 		      );
 	parser.add_argument("-f", "--filepath")
 		.help("input file");
@@ -159,8 +162,6 @@ int main(int argc, char *argv[])
 		.help("first k bytes for collision");
 	parser.add_argument("-h")
 		.help("hash for finding pre-image");
-	parser.add_argument("-n")
-		.help("bytes for check");
 	parser.add_argument("--consts")
 		.nargs(4)
 		.scan<'x', uint32_t>()
@@ -218,6 +219,19 @@ int main(int argc, char *argv[])
 			std::string hash_str = parser.get<std::string>("-h");
 			int k = parser.get<int>("-k");
 			pre_image(k, hash_from_str(hash_str));
+		} else if (action == "time") {
+			for (unsigned long int i = 1024; i < 1024 * 100; i+= 1024) {
+				std::vector<uint8_t> input;
+				input.resize(i);
+				std::fill(input.begin(), input.end(), 0xAA);
+				md4 hcont;
+				auto start = std::chrono::high_resolution_clock::now();
+				hcont.update(input);
+				hcont.finish();
+				auto finish = std::chrono::high_resolution_clock::now() - start;
+				uint64_t elapsed = std::chrono::duration_cast<std::chrono::microseconds>(finish).count();
+				std::cout << i << " Time " << elapsed << std::endl;
+			}
 		} else {
 			throw std::runtime_error("Ivalid action");
 		}

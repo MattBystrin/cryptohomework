@@ -16,18 +16,32 @@ using ustring = icu::UnicodeString;
 ustring generate_map(int r = 30);
 ustring alfb(" абвгдежзийклмнопрстуфхцчшщъыьэюя");
 ustring asort(" оетинавслрдмпкячыуьйгзбшжхюцщэъф");
-
-void encrypt(std::string filepath, std::string keypath, std::string output)
+// Generate key and save it
+void make_key(std::string keypath)
 {
-	if (filepath.empty() || keypath.empty())
-		throw std::runtime_error("Empty path");
-	std::cout << "Start encrypt" << std::endl;
 	ustring map = generate_map();
 	std::ofstream k(keypath, std::ios::out);
 	std::string tmp;
 	map.toUTF8String(tmp);
 	k << tmp;
 	k.close();
+}
+
+void encrypt(std::string filepath, std::string keypath, std::string output)
+{
+	if (filepath.empty() || keypath.empty())
+		throw std::runtime_error("Empty path");
+	std::cout << "Start encrypt" << std::endl;
+	std::string tmp;
+	if (!keypath.empty()) {
+		std::ifstream k(keypath, std::ios::in);
+		if (!std::getline(k, tmp))
+			throw std::runtime_error("Unable to read key");
+		k.close();
+	} else {
+		make_key("key.txt");
+	}
+	ustring map = ustring::fromUTF8(tmp);
 	tmp.clear();
 	std::ifstream f(filepath, std::ios::in);
 	std::ofstream o(output, std::ios::out);
@@ -154,6 +168,7 @@ ustring generate_map(int r)
 {
 	using namespace icu;
 	ustring map = alfb;
+	std::srand(time(NULL));
 	for (int i = 0; i < r; ++i) {
 		int size = map.length();
 		swap(map, std::rand() % size, std::rand() % size);
@@ -181,6 +196,10 @@ int main(int argc, char *argv[])
 	parser.add_argument("-o", "--output")
 		.required()
 		.help("output file");
+	parser.add_argument("--make-key")
+		.default_value(false)
+		.implicit_value(true)
+		.help("generate key");
 
 	std::string file;
 	std::string output;
@@ -197,6 +216,12 @@ int main(int argc, char *argv[])
 		std::exit(1);
 	}
 	try {
+		bool mk_key = parser.get<bool>("--make-key");
+		if (mk_key) {
+			output = parser.get<std::string>("-o");
+			make_key(output);
+			std::exit(0);
+		}
 		dcr = parser.get<bool>("-d");
 		ecr = parser.get<bool>("-e");
 		analysis = parser.get<bool>("-a");
